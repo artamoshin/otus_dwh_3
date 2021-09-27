@@ -1,0 +1,16 @@
+#cloud-config
+bootcmd:
+  - chmod o+w /home/airflow/dags
+  - sed -i '/load_examples/s/True/False/' /etc/airflow/airflow.cfg
+  - sed -i '/load_default_connections/s/True/False/' /etc/airflow/airflow.cfg
+
+runcmd:
+  - >
+    AIRFLOW_HOME=/etc/airflow airflow connections add
+    --conn-type=postgres
+    --conn-host=${db_hostname}
+    --conn-port=6432
+    --conn-login=airflow
+    --conn-password=${db_password}
+    --conn-schema=analytics
+    analytics_db
